@@ -13,11 +13,11 @@ def shear_line(color):
     }
 
 
-def nowcast_line(color):
+def nowcast_line(color, linestyle="-."):
     """Return config with color."""
     return {
         "color": color,
-        "linestyle": "-.",
+        "linestyle": linestyle,
         "linewidth": 1.5,
         "alpha": 1,
         "markersize": 2,
@@ -34,6 +34,7 @@ cmaps = AttrDict({
         "rasterized": True,
         "alpha": 1,
         "zorder": 3000,
+        "label": "Radial velocity [m/s]"
     },
 
     "vrad2": {
@@ -43,6 +44,7 @@ cmaps = AttrDict({
         "rasterized": True,
         "alpha": 1,
         "zorder": 3500,
+        "label": "Radial velocity [m/s]"
     },
 
     "shear": {
@@ -71,6 +73,7 @@ cmaps = AttrDict({
         "alpha": 0.5,
         "zorder": 2000,
         "edgecolor": "none",
+        "label": "Radar reflectivity [dBZ]"
     },
 
     "angle": {
