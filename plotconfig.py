@@ -47,6 +47,16 @@ cmaps = AttrDict({
         "label": "Radial velocity [m/s]"
     },
 
+    "vrad_pyart": {
+        "cmap": "pyart_BuDRd18",
+        "vmin": -30,
+        "vmax": 30,
+        "rasterized": True,
+        "alpha": 1,
+        "zorder": 3500,
+        "label": "Radial velocity [m/s]"
+    },
+
     "shear": {
         "cmap": "cividis_r",
         "vmin": 0,
@@ -66,11 +76,11 @@ cmaps = AttrDict({
     },
 
     "reflectivity": {
-        "cmap": "viridis",
-        "vmin": 0,
-        "vmax": 50,
+        "cmap": "pyart_NWSRef",
+        "vmin": -30,
+        "vmax": 75,
         "rasterized": True,
-        "alpha": 0.5,
+        "alpha": 1,
         "zorder": 2000,
         "edgecolor": "none",
         "label": "Radar reflectivity [dBZ]"

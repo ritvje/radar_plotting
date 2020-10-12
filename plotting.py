@@ -10,8 +10,9 @@ from datetime import datetime, timedelta
 import cartopy.crs as ccrs
 import cartopy.io.img_tiles as cimgt
 from distutils.spawn import find_executable
-USE_TEX = 0
-if find_executable('latex') and USE_TEX:
+import socket
+USE_TEX = 1
+if find_executable('latex') and USE_TEX and socket.gethostname() != "athras.fmi.fi":
     # Pdf plotting options
     mlt.rcParams["font.family"] = "Times New Roman"
     mlt.rcParams["font.size"] = 10
@@ -192,15 +193,15 @@ def set_ticks_lon_lat(ax, extent, lon_nticks, lat_nticks):
 
     ax.set_xticks(ticks_x, minor=False)
     ax.set_yticks(ticks_y, minor=False)
-    ax.set_xticklabels([r"%.2f$^\circ$ N" % c for c in ticks_lon], fontsize=8)
-    ax.set_yticklabels([r"%.2f$^\circ$ E" % c for c in ticks_lat], fontsize=8)
+    ax.set_xticklabels([r"%.1f$^\circ$N" % c for c in ticks_lon], fontsize=8)
+    ax.set_yticklabels([r"%.1f$^\circ$E" % c for c in ticks_lat], fontsize=8)
 
     ax.text(-0.14, 0.55, 'Latitude', va='bottom', ha='center',
             rotation='vertical', rotation_mode='anchor',
-            transform=ax.transAxes)
+            transform=ax.transAxes, fontsize=8)
     ax.text(0.5, -0.1, 'Longitude', va='bottom', ha='center',
             rotation='horizontal', rotation_mode='anchor',
-            transform=ax.transAxes)
+            transform=ax.transAxes, fontsize=8)
 
 
 def plot_pdf(fig, outfn, dpi=200, bbox_inches="tight"):
