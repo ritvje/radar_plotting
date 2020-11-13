@@ -394,7 +394,7 @@ def plot_contours(contours, X, Y, ax, closed=True, **kwargs):
                 cont = np.concatenate((cont, cont[np.newaxis, 0, ...]), axis=0)
         xx = np.squeeze((cont[..., 0] / xlim) * xlim).astype(int)
         yy = np.squeeze((cont[..., 1] / ylim) * ylim).astype(int)
-        ax.plot(X[xx], Y[yy], **kwargs)
+        ax.scatter(X[xx], Y[yy], **kwargs)
     return
 
 
@@ -458,5 +458,5 @@ def plot_contours_polar(contours, AZ, R, ax, closed=True, **kwargs):
                 cont = np.concatenate((cont, cont[np.newaxis, 0, ...]), axis=0)
         xx = np.squeeze(cont[..., 0])
         yy = np.squeeze(cont[..., 1])
-        ax.plot(binx[yy, xx], biny[yy, xx], **kwargs)
+        ax.scatter(binx[yy, xx], biny[yy, xx], **kwargs)
     return
