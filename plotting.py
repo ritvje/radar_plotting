@@ -168,7 +168,7 @@ def axes_with_background_map(
     return ax, fig, aeqd, ext
 
 
-def set_ticks_lon_lat(ax, extent, lon_nticks, lat_nticks):
+def set_ticks_lon_lat(ax, extent, lon_nticks, lat_nticks, format=r"%.1f"):
     """Set ticks as lon, lat to axis.
 
     Parameters
@@ -193,13 +193,15 @@ def set_ticks_lon_lat(ax, extent, lon_nticks, lat_nticks):
 
     ax.set_xticks(ticks_x, minor=False)
     ax.set_yticks(ticks_y, minor=False)
-    ax.set_xticklabels([r"%.1f$^\circ$N" % c for c in ticks_lon], fontsize=8)
-    ax.set_yticklabels([r"%.1f$^\circ$E" % c for c in ticks_lat], fontsize=8)
+    fmt_N = format + "$^\circ$N"
+    fmt_E = format + "$^\circ$E"
+    ax.set_xticklabels([fmt_N % c for c in ticks_lon], fontsize=8)
+    ax.set_yticklabels([fmt_E % c for c in ticks_lat], fontsize=8)
 
-    ax.text(-0.14, 0.55, 'Latitude', va='bottom', ha='center',
+    ax.text(-0.18, 0.5, 'Latitude', va='bottom', ha='center',
             rotation='vertical', rotation_mode='anchor',
             transform=ax.transAxes, fontsize=8)
-    ax.text(0.5, -0.1, 'Longitude', va='bottom', ha='center',
+    ax.text(0.5, -0.15, 'Longitude', va='bottom', ha='center',
             rotation='horizontal', rotation_mode='anchor',
             transform=ax.transAxes, fontsize=8)
 

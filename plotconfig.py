@@ -1,15 +1,27 @@
 from attrdict import AttrDict
 
 
-def shear_line(color):
+def shear_line(color, linestyle="-"):
     """Return config with color."""
     return {
         "color": color,
-        "linestyle": "-",
+        "linestyle": linestyle,
         "linewidth": 1.5,
         "alpha": 1,
         "markersize": 2,
         "zorder": 3500,
+    }
+
+
+def polygon(color, linestyle="-"):
+    """Return config with color."""
+    return {
+        "color": color,
+        "linestyle": linestyle,
+        "linewidth": 1.0,
+        "alpha": 1,
+        "markersize": 2,
+        "zorder": 3400,
     }
 
 
@@ -24,6 +36,26 @@ def nowcast_line(color, linestyle="-."):
         "zorder": 3500,
     }
 
+
+def scatter_marker(color, marker="*", s=10):
+    return {
+        "color": color,
+        "marker": marker,
+        "s": s,
+        "linewidth": 1,
+        "zorder": 3500,
+    }
+
+
+def point_marker(color, marker="*", markersize=3):
+    return {
+        "color": color,
+        "marker": marker,
+        "markersize": markersize,
+        "linewidth": 1,
+        "zorder": 3500,
+        "linestyle": "None",
+    }
 
 # Colormap definitions
 cmaps = AttrDict({
@@ -49,12 +81,12 @@ cmaps = AttrDict({
 
     "vrad_pyart": {
         "cmap": "pyart_BuDRd18",
-        "vmin": -30,
-        "vmax": 30,
+        "vmin": -48,
+        "vmax": 48,
         "rasterized": True,
         "alpha": 1,
         "zorder": 3500,
-        "label": "Radial velocity [m/s]"
+        "label": "Doppler velocity [m/s]"
     },
 
     "shear": {
@@ -77,8 +109,8 @@ cmaps = AttrDict({
 
     "reflectivity": {
         "cmap": "pyart_NWSRef",
-        "vmin": -30,
-        "vmax": 75,
+        "vmin": -15,
+        "vmax": 60,
         "rasterized": True,
         "alpha": 1,
         "zorder": 2000,
@@ -125,11 +157,11 @@ cmaps = AttrDict({
 
 # Font sizes
 fontsizes = AttrDict({
-    "title": 12,
-    "suptitle": 14,
+    "title": 10,
+    "suptitle": 12,
     "colorbar": {
-        "label": 10,
-        "ticks": 8,
+        "label": 8,
+        "ticks": 7,
     },
 })
 
@@ -238,5 +270,6 @@ scatter = AttrDict({
         "color": "tab:blue",
         "marker": "+",
         "zorder": 3500,
+        "s": 1,
     },
 })
