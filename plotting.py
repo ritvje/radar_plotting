@@ -163,12 +163,14 @@ def axes_with_background_map(
         actual_tiler = cimgt.Stamen(map)
         tiler = CachedTiler(actual_tiler)
         # Add the Stamen data at zoom level
-        ax.add_image(tiler, zoom, interpolation='spline36',
-                     regrid_shape=regrid_shape)
+        ax.add_image(tiler, zoom)
+        # , interpolation='spline36',
+        # regrid_shape=regrid_shape)
     return ax, fig, aeqd, ext
 
 
-def set_ticks_lon_lat(ax, extent, lon_nticks, lat_nticks, format=r"%.1f"):
+def set_ticks_lon_lat(ax, extent, lon_nticks, lat_nticks, format=r"%.1f",
+                      label_fontsize=8):
     """Set ticks as lon, lat to axis.
 
     Parameters
@@ -184,26 +186,28 @@ def set_ticks_lon_lat(ax, extent, lon_nticks, lat_nticks, format=r"%.1f"):
 
     """
     crs_lon_lat = ccrs.PlateCarree()
-    ticks_lon = np.linspace(extent[0], extent[1], lon_nticks)
-    ticks_lat = np.linspace(extent[2], extent[3], lat_nticks)
-    ticks_x = ax.projection.transform_points(
-        crs_lon_lat, ticks_lon, extent[2] * np.ones(ticks_lon.shape))[:, 0]
-    ticks_y = ax.projection.transform_points(
-        crs_lon_lat, extent[0] * np.ones(ticks_lat.shape), ticks_lat)[:, 1]
 
-    ax.set_xticks(ticks_x, minor=False)
-    ax.set_yticks(ticks_y, minor=False)
-    fmt_N = format + "$^\circ$N"
-    fmt_E = format + "$^\circ$E"
-    ax.set_xticklabels([fmt_N % c for c in ticks_lon], fontsize=8)
-    ax.set_yticklabels([fmt_E % c for c in ticks_lat], fontsize=8)
+    if lat_nticks > 0:
+        ticks_lat = np.linspace(extent[2], extent[3], lat_nticks)
+        ticks_y = ax.projection.transform_points(
+            crs_lon_lat, extent[0] * np.ones(ticks_lat.shape), ticks_lat)[:, 1]
+        ax.set_yticks(ticks_y, minor=False)
+        fmt_E = format + "$^\circ$E"
+        ax.set_yticklabels([fmt_E % c for c in ticks_lat], fontsize=8)
+        ax.text(-0.20, 0.5, 'Latitude', va='bottom', ha='center',
+                rotation='vertical', rotation_mode='anchor',
+                transform=ax.transAxes, fontsize=label_fontsize)
 
-    ax.text(-0.18, 0.5, 'Latitude', va='bottom', ha='center',
-            rotation='vertical', rotation_mode='anchor',
-            transform=ax.transAxes, fontsize=8)
-    ax.text(0.5, -0.15, 'Longitude', va='bottom', ha='center',
-            rotation='horizontal', rotation_mode='anchor',
-            transform=ax.transAxes, fontsize=8)
+    if lon_nticks > 0:
+        ticks_lon = np.linspace(extent[0], extent[1], lon_nticks)
+        ticks_x = ax.projection.transform_points(
+            crs_lon_lat, ticks_lon, extent[2] * np.ones(ticks_lon.shape))[:, 0]
+        ax.set_xticks(ticks_x, minor=False)
+        fmt_N = format + "$^\circ$N"
+        ax.set_xticklabels([fmt_N % c for c in ticks_lon], fontsize=8)
+        ax.text(0.5, -0.15, 'Longitude', va='bottom', ha='center',
+                rotation='horizontal', rotation_mode='anchor',
+                transform=ax.transAxes, fontsize=label_fontsize)
 
 
 def plot_pdf(fig, outfn, dpi=200, bbox_inches="tight"):
