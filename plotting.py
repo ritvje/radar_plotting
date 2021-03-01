@@ -249,6 +249,37 @@ def set_ticks_lon_lat(ax, extent, lon_nticks, lat_nticks, format=r"%.1f",
                 transform=ax.transAxes, fontsize=label_fontsize)
 
 
+def set_ticks_km(ax, extent, x_nticks, y_nticks):
+    """Set ticks as lon, lat to axis.
+
+    Parameters
+    ----------
+    ax : cartopy.mpl.geoaxes.GeoAxesSubplot object
+        The axis.
+    extent : array-like
+        The extent of the axis in coordinates.
+    x_nticks : int
+        Number of ticks in x axis.
+    y_nticks : int
+        Number of ticks in y axis.
+
+    """
+    ticks_x = np.linspace(extent[0], extent[1], x_nticks)
+    ticks_y = np.linspace(extent[2], extent[3], y_nticks)
+
+    ax.set_xticks(ticks_x, minor=False)
+    ax.set_yticks(ticks_y, minor=False)
+    ax.set_xticklabels([r"%.0f" % c for c in ticks_x], fontsize=8)
+    ax.set_yticklabels([r"%.0f" % c for c in ticks_y], fontsize=8)
+
+    # ax.text(-0.14, 0.55, 'Latitude', va='bottom', ha='center',
+    #         rotation='vertical', rotation_mode='anchor',
+    #         transform=ax.transAxes, fontsize=8)
+    # ax.text(0.5, -0.1, 'Longitude', va='bottom', ha='center',
+    #         rotation='horizontal', rotation_mode='anchor',
+    #         transform=ax.transAxes, fontsize=8)
+
+
 def plot_pdf(fig, outfn, dpi=200, bbox_inches="tight"):
     """Plot the images as pdf.
 
@@ -505,3 +536,29 @@ def plot_contours_polar(contours, AZ, R, ax, closed=True, **kwargs):
         yy = np.squeeze(cont[..., 1])
         ax.scatter(binx[yy, xx], biny[yy, xx], **kwargs)
     return
+
+
+class MidpointNormalize(mlt.colors.Normalize):
+    """Normalise the colorbar around midpoint.
+
+    Normalise the colorbar around so that diverging bars work there way
+    either side from a prescribed midpoint value).
+    Taken from http://chris35wills.github.io/matplotlib_diverging_colorbar/.
+
+    Example
+    ```
+    im=ax1.imshow(array, norm=MidpointNormalize(midpoint=0.,vmin=-100, vmax=100))
+    ```
+    """
+
+    def __init__(self, vmin=None, vmax=None, midpoint=None, clip=False):
+        """Initialize norm."""
+        self.midpoint = midpoint
+        mlt.colors.Normalize.__init__(self, vmin, vmax, clip)
+
+    def __call__(self, value, clip=None):
+        """Call function."""
+        # I'm ignoring masked values and all kinds of edge cases to make a
+        # simple example...
+        x, y = [self.vmin, self.midpoint, self.vmax], [0, 0.5, 1]
+        return np.ma.masked_array(np.interp(value, x, y), np.isnan(value))
