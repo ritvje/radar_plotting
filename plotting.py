@@ -10,22 +10,61 @@ from datetime import datetime, timedelta
 import cartopy.crs as ccrs
 import cartopy.io.img_tiles as cimgt
 from distutils.spawn import find_executable
+from functools import wraps
 import socket
-USE_TEX = 1
-if find_executable('latex') and USE_TEX and socket.gethostname() != "athras.fmi.fi":
-    # Pdf plotting options
-    mlt.rcParams["font.family"] = "Times New Roman"
-    mlt.rcParams["font.size"] = 10
-    mlt.rc("text", usetex=True)
-    mlt.rc(
-        'text.latex', preamble=(
-            "\\usepackage{mathptmx}"
-            "\\usepackage{amsfonts}"
-            "\\usepackage{amsmath}"
-            "\\usepackage{times}"
-            "\\usepackage{bbding}"
-            "\\usepackage{fontawesome5}"
-        ))
+
+# Some decorators to make life easy
+def draft(*args, **fig_kwargs):
+    """Create a figure with "DRAFT" watermark."""
+    def decorator(func):
+        @wraps(func)
+        def wrapper(*args, **kwargs):
+            fig = pl.figure(**fig_kwargs)
+            fig.text(0.5, 0.5, "DRAFT", fontsize=65,
+                     color="gray", ha="center", va="center", alpha=0.4,
+                     rotation=25, rotation_mode="anchor", transform=fig.transFigure)
+            return func(fig, *args, **kwargs)
+        return wrapper
+    return decorator
+
+
+def final(*args, **fig_kwargs):
+    """Create a figure with no watermark."""
+    def decorator(func):
+        @wraps(func)
+        def wrapper(*args, **kwargs):
+            fig = pl.figure(**fig_kwargs)
+            return func(fig, *args, **kwargs)
+        return wrapper
+    return decorator
+
+
+def use_tex(use_tex=True):
+    """Whether to use tex or not."""
+    def decorator(func):
+        @wraps(func)
+        def wrapper(*args, **kwargs):
+            if use_tex:
+                mlt.rc("text", usetex=True)
+                mlt.rc(
+                    'text.latex', preamble=(
+                        "\\usepackage{mathptmx}"
+                        "\\usepackage{amsfonts}"
+                        "\\usepackage{amsmath}"
+                        "\\usepackage{times}"
+                        "\\usepackage{bbding}"
+                        "\\usepackage{fontawesome5}"
+                    ))
+            else:
+                mlt.rc("text", usetex=False)
+
+            res = func(*args, **kwargs)
+            # Turn off afterwards
+            mlt.rc("text", usetex=False)
+
+            return res
+        return wrapper
+    return decorator
 
 
 class CachedTiler(object):
