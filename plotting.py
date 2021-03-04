@@ -209,7 +209,7 @@ def axes_with_background_map(
 
 
 def set_ticks_lon_lat(ax, extent, lon_nticks, lat_nticks, format=r"%.1f",
-                      label_fontsize=8):
+                      label_fontsize=8, lon_labels=True, lat_labels=True):
     """Set ticks as lon, lat to axis.
 
     Parameters
@@ -231,22 +231,35 @@ def set_ticks_lon_lat(ax, extent, lon_nticks, lat_nticks, format=r"%.1f",
         ticks_y = ax.projection.transform_points(
             crs_lon_lat, extent[0] * np.ones(ticks_lat.shape), ticks_lat)[:, 1]
         ax.set_yticks(ticks_y, minor=False)
-        fmt_E = format + "$^\circ$E"
-        ax.set_yticklabels([fmt_E % c for c in ticks_lat], fontsize=8)
+
+        if not lat_labels:
+            fc = "white"
+        else:
+            fc = "k"
+
+        fmt_E = format + "$^\circ$N"
+        ax.set_yticklabels([fmt_E % c for c in ticks_lat], fontsize=8, color=fc)
         ax.text(-0.20, 0.5, 'Latitude', va='bottom', ha='center',
                 rotation='vertical', rotation_mode='anchor',
-                transform=ax.transAxes, fontsize=label_fontsize)
+                transform=ax.transAxes, fontsize=label_fontsize, color=fc)
 
     if lon_nticks > 0:
         ticks_lon = np.linspace(extent[0], extent[1], lon_nticks)
         ticks_x = ax.projection.transform_points(
             crs_lon_lat, ticks_lon, extent[2] * np.ones(ticks_lon.shape))[:, 0]
         ax.set_xticks(ticks_x, minor=False)
-        fmt_N = format + "$^\circ$N"
-        ax.set_xticklabels([fmt_N % c for c in ticks_lon], fontsize=8)
+
+        if not lon_labels:
+            fc = "white"
+        else:
+            fc = "k"
+
+        fmt_N = format + "$^\circ$E"
+        ax.set_xticklabels([fmt_N % c for c in ticks_lon], fontsize=8, color=fc)
         ax.text(0.5, -0.15, 'Longitude', va='bottom', ha='center',
                 rotation='horizontal', rotation_mode='anchor',
-                transform=ax.transAxes, fontsize=label_fontsize)
+                transform=ax.transAxes, fontsize=label_fontsize, color=fc)
+
 
 
 def set_ticks_km(ax, extent, x_nticks, y_nticks):

@@ -85,7 +85,7 @@ cmaps = AttrDict({
         "vmax": 48,
         "rasterized": True,
         "alpha": 1,
-        "zorder": 3500,
+        "zorder": 2000,
         "label": "Doppler velocity [m/s]"
     },
 
@@ -260,10 +260,14 @@ scatter = AttrDict({
         "color": "tab:red",
         "marker": "+",
         "zorder": 3500,
+        "linewidth": 1,
+        "s": 12,
     },
     "orange_plus": {
         "color": "tab:orange",
         "marker": "+",
+        "s": 12,
+        "linewidth": 1,
         "zorder": 3500,
     },
     "blue_plus": {
