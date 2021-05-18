@@ -22,6 +22,7 @@ def draft(*args, **fig_kwargs):
             fig = pl.figure(**fig_kwargs)
             fig.text(0.5, 0.5, "DRAFT", fontsize=65,
                      color="gray", ha="center", va="center", alpha=0.4,
+                     zorder=0,
                      rotation=25, rotation_mode="anchor", transform=fig.transFigure)
             return func(fig, *args, **kwargs)
         return wrapper
