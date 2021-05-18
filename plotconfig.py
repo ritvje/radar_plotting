@@ -118,6 +118,17 @@ cmaps = AttrDict({
         "label": "Radar reflectivity [dBZ]"
     },
 
+    "SNR": {
+        "cmap": "pyart_NWSRef",
+        "vmin": -15,
+        "vmax": 60,
+        "rasterized": True,
+        "alpha": 1,
+        "zorder": 2000,
+        "edgecolor": "none",
+        "label": "Signal-to-noise ratio [dBZ]"
+    },
+
     "angle": {
         "cmap": "twilight",
         "vmin": 0,
@@ -152,7 +163,37 @@ cmaps = AttrDict({
         "rasterized": True,
         "alpha": 1,
         "zorder": 3000,
-    }
+    },
+
+    "SQI": {
+        "cmap": "magma",
+        "vmin": 0,
+        "vmax": 1,
+        "rasterized": True,
+        "alpha": 1,
+        "zorder": 3000,
+    },
+
+    "CNR": {
+        "cmap": "magma_r",
+        "vmin": -20,
+        "vmax": 5,
+        "rasterized": True,
+        "alpha": 1,
+        "zorder": 3000,
+        "label": "Carrier-to-noise ratio [dB]",
+    },
+
+    "vrad_var": {
+        "cmap": "magma",
+        "vmin": 0,
+        "vmax": 0.3,
+        "rasterized": True,
+        "alpha": 1,
+        "zorder": 3000,
+        "label": "Doppler velocity variance [m$^2$s$^{-2}$]",
+    },
+
 })
 
 # Font sizes
