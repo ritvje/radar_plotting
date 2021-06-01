@@ -23,8 +23,8 @@ QTY_FORMATS = {
     "DBZH": "{x:.0f}",
     "VRAD": "{x:.0f}",
     "SNR": "{x:.0f}",
-    "ZDR": "{x:.0f}",
-    "RHOHV": "{x:.3f}",
+    "ZDR": "{x:.1f}",
+    "RHOHV": "{x:.2f}",
     "KDP": "{x:.1f}",
     'HCLASS': "{x:1.0f}",
     'PHIDP': "{x:.2f}",
@@ -39,12 +39,12 @@ QTY_RANGES = {
     'DBZH': (-15.0, 60.0),
     'HCLASS': (1.0, 6.0),
     'KDP': (-4.0, 8.0),
-    'PHIDP': (-180.0, 180.0),
-    'RHOHV': (0.0, 1.0),
+    'PHIDP': (0, 360.0),
+    'RHOHV': (0.8, 1.0),
     'SQI': (0.0, 1.0),
     'TH': (-15.0, 60.0),
     'VRAD': (-30.0, 30.0),
-    'WRAD': (0.0, 2.0),
+    'WRAD': (0.0, 5.0),
     'ZDR': (-4.0, 4.0),
     'SNR': (-30.0, 50.0),
     'LOG': (0.0, 50.0)
@@ -64,6 +64,7 @@ COLORBAR_TITLES = {
     "SNR": "Signal-to-noise ratio (dB)",
     "LOG": "LOG signal-to-noise ratio (dB)",
 }
+
 
 def get_colormap(quantity):
     if quantity == "HCLASS":
@@ -88,8 +89,9 @@ def get_colormap(quantity):
         cmap = "pyart_Wild25"
         norm = None
     elif quantity == "RHOHV":
-        cmap = "pyart_RefDiff"
-        norm = None
+        bounds = [0.1, 0.2, 0.35, 0.5, 0.6, 0.7, 0.8, 0.9, 0.94, 0.96, 0.98, 0.99, 1.05]
+        norm = colors.BoundaryNorm(boundaries=bounds, ncolors=len(bounds))
+        cmap = cm.get_cmap("pyart_RefDiff", len(bounds))
     elif "WRAD" in quantity:
         cmap = "pyart_NWS_SPW"
         norm = None
