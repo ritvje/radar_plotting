@@ -4,14 +4,17 @@ import types
 import requests
 import PIL
 import numpy as np
-import matplotlib as mlt
-import matplotlib.pyplot as pl
+import matplotlib as mpl
+import matplotlib.pyplot as plt
+from mpl_toolkits.axes_grid1.inset_locator import inset_axes
+import matplotlib.patheffects as pe
 from datetime import datetime, timedelta
 import cartopy.crs as ccrs
 import cartopy.io.img_tiles as cimgt
 from distutils.spawn import find_executable
 from functools import wraps
 import socket
+from . import plot_utils
 
 # Some decorators to make life easy
 def draft(*args, **fig_kwargs):
@@ -19,7 +22,7 @@ def draft(*args, **fig_kwargs):
     def decorator(func):
         @wraps(func)
         def wrapper(*args, **kwargs):
-            fig = pl.figure(**fig_kwargs)
+            fig = plt.figure(**fig_kwargs)
             fig.text(0.5, 0.5, "DRAFT", fontsize=65,
                      color="gray", ha="center", va="center", alpha=0.4,
                      zorder=0,
@@ -34,7 +37,7 @@ def final(*args, **fig_kwargs):
     def decorator(func):
         @wraps(func)
         def wrapper(*args, **kwargs):
-            fig = pl.figure(**fig_kwargs)
+            fig = plt.figure(**fig_kwargs)
             return func(fig, *args, **kwargs)
         return wrapper
     return decorator
@@ -46,8 +49,8 @@ def use_tex(use_tex=True):
         @wraps(func)
         def wrapper(*args, **kwargs):
             if use_tex:
-                mlt.rc("text", usetex=True)
-                mlt.rc(
+                mpl.rc("text", usetex=True)
+                mpl.rc(
                     'text.latex', preamble=(
                         "\\usepackage{mathptmx}"
                         "\\usepackage{amsfonts}"
@@ -57,11 +60,11 @@ def use_tex(use_tex=True):
                         "\\usepackage{fontawesome5}"
                     ))
             else:
-                mlt.rc("text", usetex=False)
+                mpl.rc("text", usetex=False)
 
             res = func(*args, **kwargs)
             # Turn off afterwards
-            mlt.rc("text", usetex=False)
+            mpl.rc("text", usetex=False)
 
             return res
         return wrapper
@@ -552,7 +555,7 @@ def plot_contours_polar(contours, AZ, R, ax, closed=True, **kwargs):
     return
 
 
-class MidpointNormalize(mlt.colors.Normalize):
+class MidpointNormalize(mpl.colors.Normalize):
     """Normalise the colorbar around midpoint.
 
     Normalise the colorbar around so that diverging bars work there way
@@ -568,7 +571,7 @@ class MidpointNormalize(mlt.colors.Normalize):
     def __init__(self, vmin=None, vmax=None, midpoint=None, clip=False):
         """Initialize norm."""
         self.midpoint = midpoint
-        mlt.colors.Normalize.__init__(self, vmin, vmax, clip)
+        mpl.colors.Normalize.__init__(self, vmin, vmax, clip)
 
     def __call__(self, value, clip=None):
         """Call function."""
@@ -576,3 +579,82 @@ class MidpointNormalize(mlt.colors.Normalize):
         # simple example...
         x, y = [self.vmin, self.midpoint, self.vmax], [0, 0.5, 1]
         return np.ma.masked_array(np.interp(value, x, y), np.isnan(value))
+
+
+def plot_cart_image_with_objects(cart_im, Xgrid, Ygrid, day, qty, title, outfn,
+                                 thin_lines=None, contours=None, max_dist=250):
+    cbar_ax_kws = {
+        "width": "5%",  # width = 5% of parent_bbox width
+        "height": "100%",
+        "loc": 'lower left',
+        "bbox_to_anchor": (1.01, 0., 1, 1),
+        "borderpad": 0,
+    }
+
+    fig, ax = plt.subplots(nrows=1, ncols=1, figsize=(12, 10), sharex='col', sharey='row')
+    # display = pyart.graph.RadarDisplay(radar)
+    fmt = mpl.ticker.StrMethodFormatter("{x:.0f}")
+
+    cax = inset_axes(ax, bbox_transform=ax.transAxes, **cbar_ax_kws)
+
+    cmap, norm = plot_utils.get_colormap(qty)
+    if norm is None:
+        norm = mpl.colors.Normalize(vmin=plot_utils.QTY_RANGES[qty][0],
+                                    vmax=plot_utils.QTY_RANGES[qty][1])
+
+    ax.pcolormesh(Xgrid, Ygrid, cart_im, vmin=plot_utils.QTY_RANGES[qty][0],
+                  vmax=plot_utils.QTY_RANGES[qty][1], cmap=cmap, norm=norm, zorder=10,)
+
+    if contours is not None:
+        for poly in contours:
+            xy = np.round(np.array(poly.exterior.coords.xy).T).astype(int)
+            xx = np.squeeze((xy[..., 0]))
+            yy = np.squeeze((xy[..., 1]))
+            ax.plot(Xgrid[yy, xx], Ygrid[yy, xx], color="k", zorder=15,
+                    linewidth=1.5, alpha=1)
+
+    if thin_lines is not None:
+        for curve in thin_lines:
+            X = np.array(curve.xy[0]) * 1e-3
+            Y = np.array(curve.xy[1]) * 1e-3
+
+            if curve.length < 50 * 1e3:
+                continue
+
+            ax.plot(
+                X, Y,
+                color="r",
+                linestyle="solid",
+                linewidth=10,
+                alpha=1,
+                markersize=2,
+                zorder=5000,
+                path_effects=[
+                    pe.Stroke(linewidth=2, foreground='k'),
+                    pe.Normal()])
+
+    cbar = plt.colorbar(
+        mpl.cm.ScalarMappable(norm=norm, cmap=cmap), format=mpl.ticker.StrMethodFormatter(plot_utils.QTY_FORMATS[qty]),
+        orientation='vertical', cax=cax, ax=None)
+    cbar.set_label(label=plot_utils.COLORBAR_TITLES[qty], weight='bold')
+    cbar.ax.tick_params(labelsize=12)
+
+    # x-axis
+    ax.set_xlabel("Distance from radar (km)")
+    ax.set_title(ax.get_title(), y=-0.22)
+    ax.xaxis.set_major_formatter(fmt)
+
+    # y-axis
+    ax.set_ylabel("Distance from radar (km)")
+    ax.yaxis.set_major_formatter(fmt)
+
+    ax.set_xlim([-max_dist, max_dist])
+    ax.set_ylim([-max_dist, max_dist])
+    ax.set_aspect(1)
+    ax.grid(zorder=0, linestyle='-', linewidth=0.4)
+
+    # title = display.generate_title(field="reflectivity", sweep=0).split("\n")[0]
+    fig.suptitle(f"{day:%Y/%m/%d %H:%M} UTC {title}", y=0.92)
+
+    fig.subplots_adjust(wspace=0, hspace=0.2)
+    fig.savefig(outfn, dpi=600, bbox_inches="tight")

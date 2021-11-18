@@ -88,8 +88,9 @@ def get_colormap(quantity):
         cmap = "pyart_Wild25"
         norm = None
     elif quantity == "RHOHV":
-        cmap = "pyart_RefDiff"
-        norm = None
+        bounds = [0.1, 0.2, 0.35, 0.5, 0.6, 0.7, 0.8, 0.9, 0.94, 0.96, 0.98, 0.99, 1.05]
+        norm = colors.BoundaryNorm(boundaries=bounds, ncolors=len(bounds))
+        cmap = cm.get_cmap("pyart_RefDiff", len(bounds))
     elif "WRAD" in quantity:
         cmap = "pyart_NWS_SPW"
         norm = None

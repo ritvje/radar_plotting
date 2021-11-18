@@ -1,15 +1,15 @@
 from attrdict import AttrDict
 
 
-def shear_line(color, linestyle="-"):
+def shear_line(color, linestyle="-", alpha=1, zorder=3500):
     """Return config with color."""
     return {
         "color": color,
         "linestyle": linestyle,
         "linewidth": 1.5,
-        "alpha": 1,
+        "alpha": alpha,
         "markersize": 2,
-        "zorder": 3500,
+        "zorder": zorder,
     }
 
 
@@ -193,6 +193,16 @@ cmaps = AttrDict({
         "zorder": 3000,
         "label": "Doppler velocity variance [m$^2$s$^{-2}$]",
     },
+
+    "differential_reflectivity": {
+        "cmap": "pyart_RefDiff",
+        "vmin": -8,
+        "vmax": 8,
+        "rasterized": True,
+        "alpha": 1,
+        "zorder": 3000,
+        "label": "Differential reflectivity [dB]"
+    }
 
 })
 
