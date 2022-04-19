@@ -5,19 +5,36 @@ import pyart
 
 
 PYART_FIELDS = {
-    'DBZH': "reflectivity",
-    'HCLASS': "radar_echo_classification",
-    'KDP': "specific_differential_phase",
-    'PHIDP': "differential_phase",
-    'RHOHV': "cross_correlation_ratio",
-    'SQI': "normalized_coherent_power",
-    'TH': "total_power",
-    'VRAD': "velocity",
-    'WRAD': "spectrum_width",
-    'ZDR': "differential_reflectivity",
-    'SNR': "signal_to_noise_ratio",
-    'LOG': "log_signal_to_noise_ratio",
+    "DBZH": "reflectivity",
+    "HCLASS": "radar_echo_classification",
+    "KDP": "specific_differential_phase",
+    "PHIDP": "differential_phase",
+    "RHOHV": "cross_correlation_ratio",
+    "SQI": "normalized_coherent_power",
+    "TH": "total_power",
+    "VRAD": "velocity",
+    "WRAD": "spectrum_width",
+    "ZDR": "differential_reflectivity",
+    "SNR": "signal_to_noise_ratio",
+    "LOG": "log_signal_to_noise_ratio",
 }
+
+PYART_FIELDS_ODIM = {
+    "DBZH": "reflectivity_horizontal",
+    "HCLASS": "radar_echo_classification",
+    "KDP": "specific_differential_phase",
+    "PHIDP": "differential_phase",
+    "RHOHV": "cross_correlation_ratio",
+    "SQI": "normalized_coherent_power",
+    "TH": "total_power_horizontal",
+    "VRAD": "velocity",
+    "VRADH": "velocity_horizontal",
+    "WRAD": "spectrum_width",
+    "ZDR": "differential_reflectivity",
+    "SNR": "signal_to_noise_ratio",
+    "LOG": "log_signal_to_noise_ratio",
+}
+
 
 QTY_FORMATS = {
     "DBZH": "{x:.0f}",
@@ -26,28 +43,28 @@ QTY_FORMATS = {
     "ZDR": "{x:.1f}",
     "RHOHV": "{x:.2f}",
     "KDP": "{x:.1f}",
-    'HCLASS': "{x:1.0f}",
-    'PHIDP': "{x:.2f}",
-    'SQI': "{x:.1f}",
-    'TH': "{x:.0f}",
-    'WRAD': "{x:.1f}",
-    'LOG': "{x:.0f}"
+    "HCLASS": "{x:1.0f}",
+    "PHIDP": "{x:.2f}",
+    "SQI": "{x:.1f}",
+    "TH": "{x:.0f}",
+    "WRAD": "{x:.1f}",
+    "LOG": "{x:.0f}",
 }
 
 
 QTY_RANGES = {
-    'DBZH': (-15.0, 60.0),
-    'HCLASS': (1.0, 6.0),
-    'KDP': (-4.0, 8.0),
-    'PHIDP': (0, 360.0),
-    'RHOHV': (0.8, 1.0),
-    'SQI': (0.0, 1.0),
-    'TH': (-15.0, 60.0),
-    'VRAD': (-30.0, 30.0),
-    'WRAD': (0.0, 5.0),
-    'ZDR': (-4.0, 4.0),
-    'SNR': (-30.0, 50.0),
-    'LOG': (0.0, 50.0)
+    "DBZH": (-15.0, 60.0),
+    "HCLASS": (1.0, 6.0),
+    "KDP": (-4.0, 8.0),
+    "PHIDP": (0, 360.0),
+    "RHOHV": (0.8, 1.0),
+    "SQI": (0.0, 1.0),
+    "TH": (-15.0, 60.0),
+    "VRAD": (-30.0, 30.0),
+    "WRAD": (0.0, 5.0),
+    "ZDR": (-4.0, 4.0),
+    "SNR": (-30.0, 50.0),
+    "LOG": (0.0, 50.0),
 }
 
 COLORBAR_TITLES = {
