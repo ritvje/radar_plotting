@@ -138,13 +138,14 @@ def get_colormap(quantity):
         cmap = colors.ListedColormap(["r", "b", "g", "y", "k", "c"])
         norm = colors.BoundaryNorm(np.arange(0.5, 7.5), cmap.N)
     elif "VRAD" in quantity or quantity in alias_names["VRAD"]:
-        cmap = "pyart_BuDRd18"
+        # cmap = "pyart_BuDRd18"
         # cmap = cm_crameri.roma
         cmap = "cmc.roma_r"
         norm = None
     elif "DBZH" in quantity or quantity in alias_names["DBZH"]:
-        cmap = "pyart_NWSRef"
-        norm = None
+        bounds = np.arange(QTY_RANGES[quantity][0], QTY_RANGES[quantity][1] + 1, 2.5)
+        norm = colors.BoundaryNorm(boundaries=bounds, ncolors=len(bounds))
+        cmap = cm.get_cmap("pyart_HomeyerRainbow", len(bounds))
     elif quantity == "TH":
         cmap = "pyart_NWSRef"
         norm = None
