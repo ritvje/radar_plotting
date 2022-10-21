@@ -79,7 +79,7 @@ QTY_FORMATS = {
 
 
 QTY_RANGES = {
-    "DBZH": (-15.0, 60.0),
+    "DBZH": (-15.0, 50.0),
     "HCLASS": (1.0, 6.0),
     "KDP": (-4.0, 8.0),
     "PHIDP": (0, 360.0),
